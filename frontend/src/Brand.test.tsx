@@ -1,10 +1,15 @@
 import "@testing-library/jest-dom/vitest";
 import { render, screen } from "@testing-library/react";
-import { afterEach, test, vi } from "vitest";
+import { afterEach, beforeEach, test, vi } from "vitest";
 import App from "./App";
 
 afterEach(() => {
   vi.restoreAllMocks();
+});
+
+beforeEach(() => {
+  localStorage.setItem("mingjing_access_token", "test-token");
+  localStorage.setItem("mingjing_user", JSON.stringify({ id: "1", username: "admin", role: "admin", is_active: true }));
 });
 
 test("renders the Mingjing brand in readable Chinese", async () => {

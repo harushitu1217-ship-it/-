@@ -1,16 +1,21 @@
 import "@testing-library/jest-dom/vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, vi } from "vitest";
+import { afterEach, beforeEach, vi } from "vitest";
 import App from "./App";
 
 afterEach(() => {
   vi.restoreAllMocks();
 });
 
+beforeEach(() => {
+  localStorage.setItem("mingjing_access_token", "test-token");
+  localStorage.setItem("mingjing_user", JSON.stringify({ id: "1", username: "admin", role: "admin", is_active: true }));
+});
+
 test("renders the Mingjing content assistant workspace", async () => {
   render(<App />);
-  expect(screen.getByText("明景内容运营助手")).toBeInTheDocument();
+  expect(screen.getByText("绳带内容工作台")).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "首页" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "创作中心" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "话题库" })).toBeInTheDocument();

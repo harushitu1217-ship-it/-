@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import { AuthProvider, useAuth } from "./features/auth/AuthProvider";
+import { LoginPage } from "./features/auth/LoginPage";
+import { AppShell } from "./layout/AppShell";
 import { fetchBootstrap } from "./api";
 import { HistoryPanel } from "./components/HistoryPanel";
 import { ProfileEditor } from "./components/ProfileEditor";
@@ -32,7 +35,7 @@ const NAV_ITEMS: Array<{ id: AppPage; label: string }> = [
   { id: "history", label: "历史记录" },
 ];
 
-export default function App() {
+function WorkspaceApplication() {
   const [bootstrap, setBootstrap] = useState<BootstrapData>(FALLBACK_BOOTSTRAP);
   const [notice, setNotice] = useState("");
   const [page, setPage] = useState<AppPage>("create");
@@ -85,7 +88,7 @@ export default function App() {
     <main className="app-shell">
       <header className="topbar">
         <div className="topbar-inner">
-          <h1>明景内容运营助手</h1>
+          <h1>绳带内容工作台</h1>
           <p>先生成图文软文，围绕绳子、织带、绳带定制和服装辅料做搜索内容沉淀。</p>
           <nav className="app-nav" aria-label="主导航">
             {NAV_ITEMS.map((item) => (
@@ -108,5 +111,23 @@ export default function App() {
         <div className="main-column">{renderPage()}</div>
       </section>
     </main>
+  );
+}
+
+function AuthenticatedApplication() {
+  const { user, login, logout } = useAuth();
+  if (!user) return <LoginPage onLogin={login} />;
+  return (
+    <AppShell currentPage="create" onNavigate={() => undefined} user={user} onLogout={logout}>
+      <WorkspaceApplication />
+    </AppShell>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AuthenticatedApplication />
+    </AuthProvider>
   );
 }
