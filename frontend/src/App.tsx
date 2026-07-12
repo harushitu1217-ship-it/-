@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { AuthProvider, useAuth } from "./features/auth/AuthProvider";
 import { LoginPage } from "./features/auth/LoginPage";
 import { AppShell } from "./layout/AppShell";
+import type { AppPage as OperationsPage } from "./layout/AppShell";
+import { PublishingWorkspacePage } from "./features/publishing/PublishingWorkspacePage";
 import { fetchBootstrap } from "./api";
 import { HistoryPanel } from "./components/HistoryPanel";
 import { ProfileEditor } from "./components/ProfileEditor";
@@ -116,10 +118,14 @@ function WorkspaceApplication() {
 
 function AuthenticatedApplication() {
   const { user, login, logout } = useAuth();
+  const [operationsPage, setOperationsPage] = useState<OperationsPage>("create");
   if (!user) return <LoginPage onLogin={login} />;
+  const content = operationsPage === "publishing" ? <PublishingWorkspacePage /> : operationsPage === "create" ? <WorkspaceApplication /> : (
+    <section className="page-panel"><h2>{operationsPage === "catalog" ? "产品与素材" : operationsPage === "trends" ? "热点中心" : operationsPage === "review" ? "审核队列" : operationsPage === "analytics" ? "数据分析" : operationsPage === "team" ? "团队管理" : "系统设置"}</h2><p>该页面正在接入新的云端接口。</p></section>
+  );
   return (
-    <AppShell currentPage="create" onNavigate={() => undefined} user={user} onLogout={logout}>
-      <WorkspaceApplication />
+    <AppShell currentPage={operationsPage} onNavigate={setOperationsPage} user={user} onLogout={logout}>
+      {content}
     </AppShell>
   );
 }
