@@ -6,6 +6,7 @@ from app.generator import generate_contents
 from app.models import GenerationTask, Product
 from app.modules.content.quality import quality_issues
 from app.modules.content.schemas import ContentJobCreate
+from app.modules.trends.service import select_trend_context
 from app.seed_data import DEFAULT_COMPANY_PROFILE, DEFAULT_PLATFORM_TEMPLATES
 
 
@@ -66,6 +67,10 @@ def generate_content_job(db: Session, job: ContentJob, user: User) -> ContentJob
         next_versions = {item.platform: item.version_number + 1 for item in previous}
         for item in generated:
             issues = quality_issues(item.title, item.body, profile)
+            trend_sources = [
+                {"id": trend.id, "source_url": trend.source_url, "structure_summary": trend.structure_summary}
+                for trend in select_trend_context(db, item.platform)
+            ]
             version = ContentVersion(
                 job_id=job.id,
                 platform=item.platform,
@@ -79,6 +84,7 @@ def generate_content_job(db: Session, job: ContentJob, user: User) -> ContentJob
                     "publish_tip": item.publish_tip,
                     "optional_script": item.optional_script,
                     "quality_issues": issues,
+                    "trend_sources": trend_sources,
                 },
                 created_by_id=user.id,
             )
