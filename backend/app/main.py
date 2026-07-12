@@ -11,6 +11,7 @@ from app.db.models import Base
 from app.db.session import engine
 from app.generator import generate_contents_with_ai
 from app.modules.auth.routes import router as auth_router
+from app.modules.catalog.routes import router as catalog_router
 from app.routes import create_router
 
 
@@ -40,6 +41,7 @@ def create_app(db_path: str | None = None, ai_generator=generate_contents_with_a
 
     app.include_router(create_router(db_path, ai_generator=ai_generator))
     app.include_router(auth_router)
+    app.include_router(catalog_router)
     return app
 
 
