@@ -30,3 +30,4 @@ logs/
 
 # Local design sessions
 .superpowers/
+.worktrees/
