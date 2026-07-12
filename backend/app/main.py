@@ -14,6 +14,7 @@ from app.modules.auth.routes import router as auth_router
 from app.modules.catalog.routes import router as catalog_router
 from app.modules.content.routes import router as content_router
 from app.modules.providers.routes import router as provider_router
+from app.modules.publishing.routes import router as publishing_router
 from app.modules.trends.routes import router as trend_router
 from app.routes import create_router
 
@@ -47,6 +48,7 @@ def create_app(db_path: str | None = None, ai_generator=generate_contents_with_a
     app.include_router(catalog_router)
     app.include_router(content_router)
     app.include_router(provider_router)
+    app.include_router(publishing_router)
     app.include_router(trend_router)
     return app
 
