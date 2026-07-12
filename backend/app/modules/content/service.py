@@ -2,6 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db.models import CompanyProfileRow, ContentJob, ContentVersion, ProductRow, User
+from app.modules.audit.service import record_audit
 from app.generator import generate_contents
 from app.models import GenerationTask, Product
 from app.modules.content.quality import quality_issues
@@ -129,6 +130,14 @@ def review_content_job(db: Session, job: ContentJob, reviewer: User, decision: s
     job.status = decision
     if comment:
         job.error_message = comment if decision == "changes_requested" else None
+    record_audit(
+        db,
+        reviewer.id,
+        f"content.{decision}",
+        "content_job",
+        job.id,
+        {"comment": comment},
+    )
     db.commit()
     db.refresh(job)
     return job

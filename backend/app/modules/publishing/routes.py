@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.db.models import ContentJob, PublishTask, User
 from app.db.session import get_db
 from app.modules.auth.routes import get_current_user, require_roles
+from app.modules.audit.service import record_audit
 from app.modules.publishing.service import create_publish_task, manual_publish_package
 
 router = APIRouter(prefix="/api", tags=["publishing"])
@@ -66,12 +67,13 @@ def publish_package(task_id: str, db: Session = Depends(get_db), _: User = Depen
 def mark_published(
     task_id: str,
     db: Session = Depends(get_db),
-    _: User = Depends(require_roles("admin", "operator", "reviewer")),
+    user: User = Depends(require_roles("admin", "operator", "reviewer")),
 ) -> dict:
     task = db.get(PublishTask, task_id)
     if task is None:
         raise HTTPException(status_code=404, detail="发布任务不存在")
     task.status = "published"
+    record_audit(db, user.id, "publish.marked_published", "publish_task", task.id, {"platform": task.platform})
     db.commit()
     db.refresh(task)
     return task_public(task)
