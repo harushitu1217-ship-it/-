@@ -6,3 +6,27 @@ Installers/
 Thumbs.db
 desktop.ini
 .vscode/
+
+# Dependencies and build output
+node_modules/
+.pnpm-store/
+dist/
+build/
+
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Local runtime data and secrets
+*.db
+*.sqlite
+*.sqlite3
+.env
+data/uploads/
+logs/
+
+# Local design sessions
+.superpowers/
